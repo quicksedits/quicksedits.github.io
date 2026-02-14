@@ -1,1 +1,1 @@
-# Quicksedits-
+# Quicksedits
