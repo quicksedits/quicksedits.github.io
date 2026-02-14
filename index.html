@@ -3,49 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quicks Edits | Owner Only Access</title>
+    <title>Quicks Edits | Student Hub</title>
     <style>
-        :root { --bg: #0a0a0b; --accent: #ff0000; --text: #ffffff; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); text-align: center; }
-        
-        /* Profile Image Style */
-        .profile-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 3px solid var(--accent);
-            margin-top: 80px;
-            object-fit: cover;
+        /* PROFESSIONAL ANIMATED BACKGROUND */
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: white;
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0a0a0b);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            overflow-x: hidden;
         }
 
-        .container { padding: 40px 20px; }
-        .video-box { max-width: 800px; margin: 30px auto; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #333; }
-        .video-box iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        nav {
+            padding: 20px 5%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .container { padding: 120px 20px 40px; text-align: center; }
+
+        /* STUDENT AI BOX STYLE */
+        .ai-box {
+            max-width: 500px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        .ai-header { color: #00d2ff; font-weight: bold; margin-bottom: 15px; font-size: 0.9rem; }
         
-        .btn { padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; margin: 10px; transition: 0.3s; }
+        #ai-display {
+            height: 150px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        .ai-input-group { display: flex; gap: 10px; }
+        
+        input[type="text"] {
+            flex-grow: 1;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+        }
+
+        .send-btn { background: #00d2ff; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+
+        .video-card {
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px;
+            transition: 0.3s;
+        }
+
         .wa-btn { background: #25d366; color: white; }
-        .yt-btn { background: var(--accent); color: white; }
+        .yt-btn { background: #ff0000; color: white; }
     </style>
 </head>
 <body>
 
-    <img src="myphoto.jpg" alt="Quicks Edits Owner" class="profile-img">
+    <nav>
+        <div style="font-weight:bold; color:#00d2ff;">QUICKS EDITS</div>
+    </nav>
 
     <div class="container">
-        <h1>Quicks <span style="color:red">Edits</span></h1>
-        <p>Professional Video Portfolio</p>
+        <h1 style="font-size: 3rem; margin-bottom: 0;">Quicks <span style="color:#00d2ff">Student</span> Hub</h1>
+        <p style="opacity: 0.7;">Video Editing & Study Support</p>
 
-        <div class="video-box">
-            <iframe src="https://www.youtube.com/embed?listType=playlist&list=UU-kPw5ShPS8tEUomvk" allowfullscreen></iframe>
+        <div class="ai-box">
+            <div class="ai-header">🤖 STUDENT AI ASSISTANT (Beta)</div>
+            <div id="ai-display">Hello! I am your student assistant. Ask me anything about editing or your studies!</div>
+            <div class="ai-input-group">
+                <input type="text" id="user-input" placeholder="Ask a question...">
+                <button class="send-btn" onclick="askAI()">Ask</button>
+            </div>
+        </div>
+
+        <div class="video-card">
+            <iframe width="100%" height="450" src="https://www.youtube.com/embed?listType=user_uploads&list=quicksedits" frameborder="0" allowfullscreen></iframe>
         </div>
 
         <div class="btn-group">
-            <a href="https://wa.me/919347260862" class="btn wa-btn">WhatsApp Me</a>
-            <a href="https://youtube.com/@quicksedits" target="_self" class="btn yt-btn">YouTube Channel</a>
+            <a href="https://wa.me/919347260862" class="btn wa-btn">WhatsApp Support</a>
+            <a href="https://youtube.com/@quicksedits" class="btn yt-btn">Subscribe</a>
         </div>
     </div>
 
-    <p style="color:#444; font-size: 12px;">© 2026 Quicks Edits - Secure Owner Access Only</p>
+    <script>
+        function askAI() {
+            const input = document.getElementById('user-input');
+            const display = document.getElementById('ai-display');
+            if(input.value.trim() === "") return;
+            
+            display.innerHTML += `<br><br><b style="color:white">You:</b> ${input.value}`;
+            
+            // This is a simple simulated response
+            setTimeout(() => {
+                display.innerHTML += `<br><br><b style="color:#00d2ff">AI:</b> I am processing your request. As a student assistant, I recommend checking Quicks Edits YouTube for the best tutorials!`;
+                input.value = "";
+                display.scrollTop = display.scrollHeight;
+            }, 1000);
+        }
+    </script>
 
 </body>
 </html>
