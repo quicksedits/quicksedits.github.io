@@ -3,34 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SABRINA AI</title>
+    <title>SABRINA | Master AI</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root { --accent: #00ffaa; --bg: #050508; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; display: flex; height: 100vh; flex-direction: column; }
-        #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .bubble { padding: 15px; border-radius: 12px; max-width: 85%; line-height: 1.6; }
-        .user { align-self: flex-end; background: var(--accent); color: #000; font-weight: bold; }
-        .ai { align-self: flex-start; background: #11111a; border: 1px solid #222; }
-        .input-bar { padding: 20px; background: #0a0a0f; display: flex; gap: 10px; border-top: 1px solid #222; }
-        textarea { flex: 1; background: #15151b; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; outline: none; resize: none; }
-        button { background: var(--accent); color: #000; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .loader { font-size: 0.8rem; color: var(--accent); font-family: monospace; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        #chat { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        .bubble { padding: 18px; border-radius: 15px; max-width: 85%; line-height: 1.6; font-size: 1.05rem; }
+        .user { align-self: flex-end; background: var(--accent); color: #000; font-weight: bold; box-shadow: 0 4px 15px rgba(0,255,170,0.3); }
+        .ai { align-self: flex-start; background: #11111a; border: 1px solid #222; color: #eee; }
+        .input-bar { padding: 30px; background: #0a0a0f; display: flex; gap: 15px; border-top: 1px solid #222; }
+        textarea { flex: 1; background: #15151b; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; outline: none; resize: none; font-size: 1rem; }
+        button { background: var(--accent); color: #000; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        button:hover { transform: scale(1.05); filter: brightness(1.1); }
+        .err { color: #ff4444; font-family: monospace; font-size: 0.8rem; margin-top: 10px; display: block; }
     </style>
 </head>
 <body>
 
     <div id="chat">
-        <div class="bubble ai"><b>System Ready.</b> I am Sabrina. Ask me anything and I will provide a logical answer.</div>
+        <div class="bubble ai"><b>Neural Link Active.</b> I am Sabrina. I am ready to provide hardworking, intelligent answers. What shall we solve?</div>
     </div>
 
     <div class="input-bar">
-        <textarea id="userInput" placeholder="Ask Sabrina..." rows="1"></textarea>
+        <textarea id="userInput" placeholder="Type your project or math question..." rows="1"></textarea>
         <button onclick="askSabrina()">EXECUTE</button>
     </div>
 
     <script>
+        // YOUR VERIFIED KEY
         const KEY = "AIzaSyAU90lMJSHKKhs2iG7nadi847LXAoAW0jA";
+        const MODEL = "gemini-1.5-flash"; // More stable for mobile/web
 
         async function askSabrina() {
             const input = document.getElementById('userInput');
@@ -39,39 +42,47 @@
 
             if (!text) return;
 
-            // 1. Show User Message
+            // 1. User UI
             chat.innerHTML += `<div class="bubble user">${text}</div>`;
             input.value = "";
             chat.scrollTop = chat.scrollHeight;
 
-            // 2. Show Loading State
-            const loadingId = "loading-" + Date.now();
-            chat.innerHTML += `<div class="bubble ai" id="${loadingId}"><span class="loader">Sabrina is thinking...</span></div>`;
+            // 2. Loading State
+            const loaderId = "id-" + Date.now();
+            chat.innerHTML += `<div class="bubble ai" id="${loaderId}">Sabrina is processing logic...</div>`;
             chat.scrollTop = chat.scrollHeight;
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${KEY}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "You are Sabrina, a genius AI. Answer this: " + text }] }]
+                        contents: [{ parts: [{ text: "Your name is Sabrina. You are a genius AI. Solve this: " + text }] }]
                     })
                 });
 
                 const data = await response.json();
-                const aiBubble = document.getElementById(loadingId);
+                const aiBubble = document.getElementById(loaderId);
 
                 if (data.candidates && data.candidates[0].content) {
                     const result = data.candidates[0].content.parts[0].text;
                     aiBubble.innerHTML = marked.parse(result);
+                } else if (data.error) {
+                    // This tells us EXACTLY why Google is saying no
+                    aiBubble.innerHTML = `Sabrina: Access Denied. <span class="err">Reason: ${data.error.message} (Code: ${data.error.code})</span>`;
                 } else {
-                    aiBubble.innerHTML = "Sabrina: I had trouble connecting. Please check your API key status.";
+                    aiBubble.innerHTML = "Sabrina: Logic Link timeout. Please refresh and try again.";
                 }
             } catch (err) {
-                document.getElementById(loadingId).innerHTML = "Error: Connection blocked. Use GitHub Pages to host this file.";
+                document.getElementById(loaderId).innerHTML = "Sabrina: Neural Core Offline. Check your GitHub Pages deployment.";
             }
             chat.scrollTop = chat.scrollHeight;
         }
+
+        // Enter Key Support
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askSabrina(); }
+        });
     </script>
 </body>
 </html>
