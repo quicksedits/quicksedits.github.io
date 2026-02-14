@@ -3,141 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SABRINA | Elite Logic AI</title>
+    <title>SABRINA | Elite Logic Core</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     
     <style>
-        :root { --accent: #00ffaa; --bg: #020205; --panel: #0a0a0f; --border: rgba(0, 255, 170, 0.2); }
+        :root { --accent: #00ffaa; --bg: #030306; --panel: #0d0d14; }
         body { background: var(--bg); color: #e2e8f0; font-family: 'Space Grotesk', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
         /* Sidebar */
-        .sidebar { width: 300px; background: var(--panel); border-right: 1px solid var(--border); padding: 40px; display: flex; flex-direction: column; }
-        .logo { font-size: 2.2rem; font-weight: 800; color: var(--accent); text-shadow: 0 0 15px rgba(0,255,170,0.4); }
-        .status { font-size: 0.7rem; letter-spacing: 2px; color: var(--accent); margin-top: 5px; opacity: 0.8; }
+        .sidebar { width: 320px; background: var(--panel); border-right: 1px solid rgba(0,255,170,0.1); padding: 40px; display: flex; flex-direction: column; }
+        .logo { font-size: 2rem; font-weight: 800; color: var(--accent); letter-spacing: 2px; }
+        .status { font-size: 0.7rem; color: var(--accent); margin-top: 5px; opacity: 0.8; font-family: 'JetBrains Mono'; }
 
-        /* Main Workspace */
-        .workspace { flex: 1; display: flex; flex-direction: column; background: radial-gradient(circle at center top, #0c1512, #020205); }
-        #chat-flow { flex: 1; overflow-y: auto; padding: 60px 12%; display: flex; flex-direction: column; gap: 35px; }
+        /* Workspace */
+        .main { flex: 1; display: flex; flex-direction: column; }
+        #chat-flow { flex: 1; overflow-y: auto; padding: 60px 15%; display: flex; flex-direction: column; gap: 40px; }
 
-        /* Bubbles */
-        .bubble { max-width: 90%; line-height: 1.8; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .user { align-self: flex-end; color: var(--accent); border-right: 3px solid var(--accent); padding-right: 20px; text-align: right; font-weight: 500; }
-        .ai { align-self: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 30px; border-radius: 15px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        /* Message Styling */
+        .bubble { max-width: 100%; line-height: 1.8; animation: slideUp 0.6s ease forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .thought-log { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #556; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; text-transform: uppercase; }
+        .user { color: var(--accent); border-left: 2px solid var(--accent); padding-left: 20px; font-weight: 500; margin-bottom: 10px; }
+        .ai { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 12px; }
+        
+        .thinking-banner { font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #556; margin-bottom: 15px; text-transform: uppercase; }
 
-        /* Input Area */
-        .input-zone { padding: 40px 12%; }
-        .input-bar { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; padding: 15px 25px; display: flex; gap: 20px; backdrop-filter: blur(10px); }
-        textarea { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 1.1rem; resize: none; font-family: inherit; padding-top: 10px; }
-        button { background: var(--accent); color: #000; border: none; padding: 12px 35px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        button:hover { box-shadow: 0 0 25px var(--accent); transform: translateY(-2px); }
-
-        /* Code Blocks */
-        pre { background: #000 !important; padding: 20px; border-radius: 12px; border: 1px solid #222; overflow-x: auto; }
-        code { font-family: 'JetBrains Mono', monospace; color: var(--accent); }
+        /* Input Zone */
+        .input-zone { padding: 40px 15%; background: linear-gradient(transparent, var(--bg)); }
+        .input-bar { background: #161620; border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 10px 20px; display: flex; gap: 15px; }
+        textarea { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 1.1rem; resize: none; font-family: inherit; padding: 10px 0; }
+        .send-btn { background: var(--accent); color: #000; border: none; padding: 0 30px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .send-btn:hover { box-shadow: 0 0 20px var(--accent); }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar" id="side">
+    <aside class="sidebar">
         <div class="logo">SABRINA</div>
-        <div class="status">● NEURAL CORE ACTIVE</div>
-        <div style="margin-top: 50px; color: #444; font-size: 0.8rem; line-height: 2;">
-            INTELLIGENCE: 2.0 FLASH<br>
-            SEARCH MODE: SIMULATED DEEP<br>
-            REASONING: PRO-LEVEL<br>
-            STATUS: READY
+        <div class="status">ONLINE // READY</div>
+        <div style="margin-top: 50px; font-size: 0.85rem; color: #667; line-height: 2;">
+            NAME: SABRINA<br>
+            ROLE: MASTER LOGICIAN<br>
+            THINKING: HARDWORK MODE<br>
+            IQ: OPTIMIZED
         </div>
     </aside>
 
-    <main class="workspace">
+    <main class="main">
         <div id="chat-flow">
             <div class="bubble ai">
-                <div class="thought-log">Booting Sabrina OS... Connection Secure.</div>
-                Welcome. I am <b>Sabrina</b>. I have been initialized with your dedicated API key. I am ready to tackle your hardest projects, conduct deep logic research, and provide high-intelligence solutions. What is our first objective?
+                <div class="thinking-banner">System Initialization Complete</div>
+                I am <b>Sabrina</b>. My logic core is fully powered. Ask your hardest questions, and I will provide the most intelligent, hardworking answers back.
             </div>
         </div>
 
         <div class="input-zone">
             <div class="input-bar">
-                <textarea id="user-input" placeholder="Type a hard problem or research request..." rows="1"></textarea>
-                <button onclick="askSabrina()">EXECUTE</button>
+                <textarea id="user-input" placeholder="Type your project logic here..." rows="1"></textarea>
+                <button class="send-btn" onclick="executeSabrina()">EXECUTE</button>
             </div>
         </div>
     </main>
 
     <script>
-        // API KEY LOADED
-        const SABRINA_KEY = "AIzaSyAU90lMJSHKKhs2iG7nadi847LXAoAW0jA"; 
-        const MODEL = "gemini-1.5-flash"; // Using the stable 1.5-flash for maximum reliability
+        const KEY = "AIzaSyAU90lMJSHKKhs2iG7nadi847LXAoAW0jA";
+        const MODEL = "gemini-1.5-flash";
 
-        const PERSONALITY = "Your name is Sabrina. You are a genius, hardworking, and elite AI assistant. You provide 'Deep Search' results by simulating a high-level web analysis. Give long, detailed, and extremely smart answers with clear logical steps.";
-
-        async function askSabrina() {
+        async function executeSabrina() {
             const input = document.getElementById('user-input');
             const flow = document.getElementById('chat-flow');
-            const val = input.value.trim();
-            if (!val) return;
+            const query = input.value.trim();
+            if(!query) return;
 
-            // Display User Message
-            addMessage('user', val);
+            // Display User Query
+            flow.innerHTML += `<div class="bubble user">${query}</div>`;
             input.value = "";
             flow.scrollTop = flow.scrollHeight;
 
-            // Display "Thinking" Loader
+            // Loader
             const loader = document.createElement('div');
             loader.className = 'bubble ai';
-            loader.innerHTML = `<div class="thought-log">Accessing Global Data Nodes...<br>Simulating Deep Search...<br>Verifying Logical Accuracy...</div>Analyzing...`;
+            loader.innerHTML = `<div class="thinking-banner">Sabrina is analyzing logic chains...</div>Processing...`;
             flow.appendChild(loader);
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${SABRINA_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: PERSONALITY + "\n\nUser Message: " + val }] }],
-                        generationConfig: { temperature: 0.4, maxOutputTokens: 2000 }
+                        contents: [{ parts: [{ text: "Your name is Sabrina. You are a hardworking, genius student AI. Provide long, logical, and smart answers. User says: " + query }] }],
+                        generationConfig: { temperature: 0.5, maxOutputTokens: 2000 }
                     })
                 });
 
-                const data = await response.json();
+                const data = await res.json();
                 loader.remove();
 
-                if (data.candidates && data.candidates[0].content) {
-                    const reply = data.candidates[0].content.parts[0].text;
+                if(data.candidates && data.candidates[0].content) {
+                    const responseText = data.candidates[0].content.parts[0].text;
                     const aiDiv = document.createElement('div');
                     aiDiv.className = 'bubble ai';
-                    aiDiv.innerHTML = `<div class="thought-log">SEARCH COMPLETE // LOGIC VERIFIED</div>${marked.parse(reply)}`;
+                    aiDiv.innerHTML = `<div class="thinking-banner">Logic Finalized</div>${marked.parse(responseText)}`;
                     flow.appendChild(aiDiv);
                 } else {
-                    throw new Error("API Response Error");
+                    throw new Error();
                 }
-            } catch (err) {
-                loader.innerHTML = `<div style="color:#ff4444"><b>Sabrina:</b> Connection Refused. Please ensure this file is hosted on a web server (GitHub/Netlify).</div>`;
-                console.error(err);
+            } catch (e) {
+                loader.innerHTML = `<div style="color:red">Error: Connection Refused. Please host this on GitHub Pages for security clearance.</div>`;
             }
             flow.scrollTop = flow.scrollHeight;
         }
 
-        function addMessage(role, content) {
-            const div = document.createElement('div');
-            div.className = `bubble ${role}`;
-            div.innerHTML = content;
-            document.getElementById('chat-flow').appendChild(div);
-        }
-
-        // Handle Enter Key
         document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askSabrina(); }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); executeSabrina(); }
         });
-
-        // Entrance Animation
-        gsap.from("#side", { x: -300, duration: 1.2, ease: "expo.out" });
     </script>
 </body>
 </html>
