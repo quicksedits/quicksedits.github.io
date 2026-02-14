@@ -1,0 +1,43 @@
+/**
+ * SABRINA AI - MASTER LOGIC CORE (2026)
+ * This file handles the direct connection to Google's Gemini API.
+ */
+
+const SABRINA_CONFIG = {
+    apiKey: "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg",
+    // Using the stable v1beta endpoint to solve the "Model Not Found" error
+    apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+};
+
+async function executeQuery(userPrompt) {
+    if (!userPrompt) return "Error: No input provided.";
+
+    try {
+        const response = await fetch(`${SABRINA_CONFIG.apiUrl}?key=${SABRINA_CONFIG.apiKey}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: `Your name is Sabrina. You are a hardworking genius AI. Solve: ${userPrompt}` }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+
+        // Checking if the neural link successfully returned data
+        if (data.candidates && data.candidates[0].content) {
+            return data.candidates[0].content.parts[0].text;
+        } else {
+            // This captures the exact error message from Google's servers
+            return `SABRINA_ERROR: ${data.error ? data.error.message : "Handshake Failed"}`;
+        }
+    } catch (error) {
+        return "CONNECTION_FAILURE: Link to API disrupted.";
+    }
+}
+
+// Example usage:
+// executeQuery("2+2").then(answer => console.log(answer));
