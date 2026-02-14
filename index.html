@@ -16,9 +16,9 @@
 </head>
 <body>
 
-    <h2 style="text-align:center">SABRINA NEURAL LINK</h2>
+    <h2 style="text-align:center">SABRINA_LOGIC_CORE</h2>
     <div id="chat">
-        <div class="msg">SYSTEM: Neural link ready. Logic engine online.</div>
+        <div class="msg">SYSTEM: Neural link establishing...</div>
     </div>
 
     <div class="input-area">
@@ -27,10 +27,10 @@
     </div>
 
     <script>
-        const KEY = "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg";
+        const KEY = "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg";  // Replace with a valid API key if this one is invalid
         
-        // This URL uses the 'latest' tag to solve the "Not Found" error
-        const URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+        // Updated to a current model (lightweight and fast, similar to the original)
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
 
         async function ask() {
             const input = document.getElementById('userInput');
@@ -43,7 +43,7 @@
             chat.scrollTop = chat.scrollHeight;
 
             try {
-                const response = await fetch(`${URL}?key=${KEY}`, {
+                const response = await fetch(`\( {API_URL}?key= \){KEY}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -53,24 +53,18 @@
 
                 const data = await response.json();
                 
-                if (data.candidates && data.candidates[0].content) {
+                if (data.candidates) {
                     const answer = data.candidates[0].content.parts[0].text;
                     chat.innerHTML += `<div class="msg"><b>SABRINA:</b> ${answer}</div>`;
                 } else {
-                    // This will tell us if the API key itself is restricted
-                    const errMsg = data.error ? data.error.message : "Handshake failed";
-                    chat.innerHTML += `<div class="msg" style="color:red">ERROR: ${errMsg}</div>`;
+                    // This shows the exact reason if it fails
+                    chat.innerHTML += `<div class="msg" style="color:red">ERROR: ${data.error.message}</div>`;
                 }
             } catch (e) {
-                chat.innerHTML += `<div class="msg" style="color:red">CONNECTION ERROR: Check GitHub Pages.</div>`;
+                chat.innerHTML += `<div class="msg" style="color:red">CONNECTION_LOST: Try again.</div>`;
             }
             chat.scrollTop = chat.scrollHeight;
         }
-
-        // Allow pressing "Enter" to send
-        document.getElementById('userInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') ask();
-        });
     </script>
 </body>
 </html>
