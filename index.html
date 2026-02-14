@@ -3,135 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quicks Edits | Premium Portfolio</title>
+    <title>Quicks AI | Logical Editing Architecture</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    
     <style>
+        /* --- CORE VARIABLES --- */
         :root {
-            --primary: #00d2ff;
-            --secondary: #9d50bb;
-            --dark: #0f0c29;
-            --glass: rgba(255, 255, 255, 0.1);
+            --bg-color: #050505;
+            --surface: #0a0a0a;
+            --border: #1f1f1f;
+            --accent: #00f2ff; /* Cyber Blue */
+            --accent-glow: rgba(0, 242, 255, 0.2);
+            --text-main: #e0e0e0;
+            --text-dim: #888888;
+            --success: #00ff9d;
         }
 
+        /* --- GLOBAL STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: white;
-            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* NAVIGATION */
+        /* --- BACKGROUND FX --- */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .glow-orb {
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
         nav {
-            padding: 20px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(15px);
-            position: fixed;
-            width: 90%;
-            z-index: 1000;
-        }
-
-        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
-
-        /* HERO SECTION */
-        .container { padding: 120px 5% 50px; text-align: center; }
-
-        /* AUTH SECTION (LOGIN/SIGNUP) */
-        .auth-card {
-            max-width: 400px;
-            margin: 40px auto;
-            background: var(--glass);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
+            padding: 20px 5%;
+            border-bottom: 1px solid var(--border);
+            background: rgba(5, 5, 5, 0.8);
             backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        input {
-            width: 85%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: none;
-            background: rgba(255,255,255,0.2);
-            color: white;
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent);
+            letter-spacing: -1px;
         }
 
-        /* POPULAR VIDEO SECTION */
-        .video-wrapper {
-            max-width: 350px; /* Slim for Shorts */
-            margin: 40px auto;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 0 30px var(--primary);
-            border: 2px solid var(--primary);
-        }
-
-        iframe { width: 100%; aspect-ratio: 9/16; border: none; }
-
-        /* BUTTONS */
-        .btn {
-            padding: 12px 30px;
-            border-radius: 50px;
+        .nav-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 4px;
             text-decoration: none;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 20px;
+            font-size: 0.9rem;
             transition: 0.3s;
-            cursor: pointer;
-            border: none;
         }
 
-        .primary-btn { background: var(--primary); color: #000; }
-        .wa-btn { background: #25d366; color: white; margin-top: 10px; }
+        .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* STUDENT AI SECTION */
-        .ai-section {
-            background: var(--glass);
+        /* --- HERO SECTION --- */
+        .container { max-width: 1000px; margin: 0 auto; padding: 80px 20px; text-align: center; }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        p.subtitle { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto 60px; }
+
+        /* --- FEATURED VIDEO (High Quality Frame) --- */
+        .video-frame {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 100px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-frame::before {
+            content: "REC // 00:00:00:00";
+            position: absolute;
+            top: 20px; left: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            color: red;
+            font-size: 0.8rem;
+            z-index: 10;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
+
+        /* --- AI TERMINAL (ChatGPT Style) --- */
+        .ai-section { text-align: left; margin-top: 50px; }
+        
+        .terminal-window {
+            background: #0f0f0f;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-header {
+            background: #1a1a1a;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #333; }
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .chat-display {
+            height: 300px;
             padding: 20px;
-            border-radius: 15px;
-            margin-top: 40px;
+            overflow-y: auto;
+            color: var(--text-main);
+            font-size: 0.9rem;
         }
+
+        .message { margin-bottom: 15px; display: flex; gap: 10px; }
+        .bot-tag { color: var(--accent); font-weight: bold; min-width: 40px; }
+        .user-tag { color: var(--success); font-weight: bold; min-width: 40px; }
+
+        .input-area {
+            display: flex;
+            border-top: 1px solid var(--border);
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 15px 20px;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+        }
+
+        button.send-btn {
+            background: var(--accent);
+            color: black;
+            border: none;
+            padding: 0 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.send-btn:hover { background: white; }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: 100px;
+            padding: 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        
+        .social-link {
+            color: var(--text-main);
+            text-decoration: none;
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .social-link:hover { border-color: var(--accent); color: var(--accent); }
+
     </style>
 </head>
 <body>
 
+    <div class="grid-bg"></div>
+    <div class="glow-orb"></div>
+
     <nav>
-        <div class="logo">QUICKS EDITS</div>
-        <div>
-            <a href="#popular" style="color:white; margin-right:15px; text-decoration:none;">Popular</a>
-            <a href="#contact" style="color:white; text-decoration:none;">Contact</a>
-        </div>
+        <div class="logo">QUICKS_AI_NODE</div>
+        <a href="https://youtube.com/@quicksedits?si=DU0xU5_rtdRKV-Gv" class="nav-btn" target="_blank">View Channel</a>
     </nav>
 
     <div class="container">
-        <h1>Welcome to the <span style="color:var(--primary)">Elite Hub</span></h1>
-        
-        <div id="auth-ui" class="auth-card">
-            <h3>Login to Contact Me</h3>
-            <input type="email" placeholder="Email Address">
-            <input type="password" placeholder="Password">
-            <button class="btn primary-btn" onclick="alert('Login Successful! You can now access WhatsApp Support.')">Login / Sign Up</button>
-        </div>
+        <h1>High-Performance<br>Logical Editing.</h1>
+        <p class="subtitle">Precision. Logic. Creativity. Experience the next generation of video content.</p>
 
-        <div id="popular" class="video-wrapper">
-            <h4 style="margin:10px;">🔥 Popular Edit</h4>
+        <div class="video-frame">
             <iframe src="https://www.youtube.com/embed/YpCjJ341LA8" allowfullscreen></iframe>
         </div>
 
-        <div id="contact" class="ai-section">
-            <h2>Contact & Support</h2>
-            <p>Once logged in, use the button below:</p>
-            <a href="https://wa.me/919347260862" class="btn wa-btn">💬 Chat on WhatsApp</a>
+        <div class="ai-section">
+            <h2 style="font-size: 1.5rem; margin-bottom: 20px; color:white;">System Intelligence</h2>
+            
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    <span style="margin-left: 10px;">quicks_assistant.exe</span>
+                </div>
+                
+                <div class="chat-display" id="chatbox">
+                    <div class="message">
+                        <span class="bot-tag">AI:</span>
+                        <span>System online. I am the Quicks Logic Core. Ask me about editing, visuals, or channel stats.</span>
+                    </div>
+                </div>
+                
+                <div class="input-area">
+                    <input type="text" id="userInput" placeholder="Enter command or query..." onkeypress="handleEnter(event)">
+                    <button class="send-btn" onclick="sendMessage()">RUN</button>
+                </div>
+            </div>
         </div>
+
     </div>
 
-    <footer style="padding:40px; text-align:center; opacity:0.5;">
-        &copy; 2026 Quicks Edits | Secure Owner Access Only
+    <footer>
+        <p>SYSTEM STATUS: OPERATIONAL</p>
+        <p>&copy; 2026 Quicks Edits Architecture.</p>
+        <br>
+        <a href="https://youtube.com/@quicksedits?si=DU0xU5_rtdRKV-Gv" class="social-link">📺 Access YouTube Database</a>
     </footer>
+
+    <script>
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function sendMessage() {
+            const inputField = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatbox');
+            const userText = inputField.value.trim();
+
+            if (userText === "") return;
+
+            // 1. Add User Message
+            chatBox.innerHTML += `
+                <div class="message">
+                    <span class="user-tag">YOU:</span>
+                    <span style="color: #ccc;">${userText}</span>
+                </div>
+            `;
+            
+            // Clear input and scroll
+            inputField.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 2. Simulate AI Thinking (Logic Delay)
+            setTimeout(() => {
+                let aiResponse = generateLogic(userText);
+                
+                chatBox.innerHTML += `
+                    <div class="message">
+                        <span class="bot-tag">AI:</span>
+                        <span>${aiResponse}</span>
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 800);
+        }
+
+        // 3. Simple Logic Brain
+        function generateLogic(text) {
+            text = text.toLowerCase();
+            
+            if (text.includes("hello") || text.includes("hi")) {
+                return "Greetings. Logic systems are fully operational.";
+            }
+            else if (text.includes("edit") || text.includes("video")) {
+                return "Editing requires precision. My database indicates Quicks Edits uses high-end pacing and color theory.";
+            }
+            else if (text.includes("youtube") || text.includes("channel")) {
+                return "The channel contains advanced visual data. Click the 'View Channel' button to access.";
+            }
+            else if (text.includes("who are you")) {
+                return "I am a simulated logical assistant designed for this website.";
+            }
+            else {
+                return "Input received. Processing data... I recommend watching the latest upload for visual context.";
+            }
+        }
+    </script>
 
 </body>
 </html>
