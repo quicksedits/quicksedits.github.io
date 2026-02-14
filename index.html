@@ -3,97 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quicks Edits | Professional Video Editor</title>
+    <title>Quicks Edits | Owner Only Access</title>
     <style>
-        :root {
-            --bg: #0a0a0b;
-            --accent: #ff0000; /* YouTube Red */
-            --blue: #0070f3;
-            --text: #ffffff;
+        :root { --bg: #0a0a0b; --accent: #ff0000; --text: #ffffff; }
+        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); text-align: center; }
+        
+        /* Profile Image Style */
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            margin-top: 80px;
+            object-fit: cover;
         }
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            text-align: center;
-        }
-
-        nav {
-            padding: 20px;
-            background: rgba(0,0,0,0.8);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo { font-weight: bold; font-size: 1.5rem; color: var(--blue); }
-
-        .container { padding: 100px 20px; }
-
-        h1 { font-size: 3rem; margin-top: 50px; }
-        .highlight { color: var(--accent); }
-
-        /* The Embedded YouTube Player */
-        .video-box {
-            max-width: 900px;
-            margin: 40px auto;
-            border: 3px solid #333;
-            border-radius: 20px;
-            overflow: hidden;
-            background: #000;
-        }
-
-        .video-box iframe {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border: none;
-        }
-
-        .btn-group { margin: 30px; }
-
-        .btn {
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            display: inline-block;
-            margin: 10px;
-            transition: 0.3s;
-        }
-
+        .container { padding: 40px 20px; }
+        .video-box { max-width: 800px; margin: 30px auto; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #333; }
+        .video-box iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+        
+        .btn { padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; margin: 10px; transition: 0.3s; }
         .wa-btn { background: #25d366; color: white; }
         .yt-btn { background: var(--accent); color: white; }
-
-        .footer { padding: 50px; color: #444; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <nav><div class="logo">QUICKS EDITS</div></nav>
+    <img src="myphoto.jpg" alt="Quicks Edits Owner" class="profile-img">
 
     <div class="container">
-        <h1>Watch My <span class="highlight">Latest Edits</span></h1>
-        <p>You can browse and watch my channel directly below!</p>
+        <h1>Quicks <span style="color:red">Edits</span></h1>
+        <p>Professional Video Portfolio</p>
 
         <div class="video-box">
-            <iframe 
-                src="https://www.youtube.com/embed?listType=user_uploads&list=quicksedits" 
-                allowfullscreen>
-            </iframe>
+            <iframe src="https://www.youtube.com/embed?listType=playlist&list=UU-kPw5ShPS8tEUomvk" allowfullscreen></iframe>
         </div>
 
         <div class="btn-group">
             <a href="https://wa.me/919347260862" class="btn wa-btn">WhatsApp Me</a>
-            <a href="https://youtube.com/@quicksedits" target="_self" class="btn yt-btn">Channel Link</a>
+            <a href="https://youtube.com/@quicksedits" target="_self" class="btn yt-btn">YouTube Channel</a>
         </div>
     </div>
 
-    <div class="footer">
-        &copy; 2026 Quicks Edits. Only authorized owner can edit this content.
-    </div>
+    <p style="color:#444; font-size: 12px;">© 2026 Quicks Edits - Secure Owner Access Only</p>
 
 </body>
 </html>
