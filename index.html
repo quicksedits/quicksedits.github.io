@@ -1,83 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SABRINA AI | 100% Active</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-        :root { --accent: #00ffaa; --bg: #050508; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .bubble { padding: 15px; border-radius: 12px; max-width: 85%; line-height: 1.6; }
-        .user { align-self: flex-end; background: var(--accent); color: #000; font-weight: bold; }
-        .ai { align-self: flex-start; background: #11111a; border: 1px solid #333; }
-        .input-bar { padding: 20px; background: #0a0a0f; display: flex; gap: 10px; border-top: 1px solid #222; }
-        textarea { flex: 1; background: #15151b; border: 1px solid #444; color: #fff; padding: 12px; border-radius: 8px; outline: none; resize: none; }
-        button { background: var(--accent); color: #000; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    </style>
-</head>
-<body>
+<script>
+    // 1. YOUR LATEST KEY
+    const KEY = "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg";
+    
+    // 2. UPDATED STABLE URL & MODEL
+    // We are switching to the v1beta endpoint with the 2.0 model for maximum compatibility
+    const URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
-    <div id="chat">
-        <div class="bubble ai"><b>Logic Core Optimized.</b> I am Sabrina. I have fixed my internal link. Ask me "2+2" right now to see me work!</div>
-    </div>
+    async function askSabrina() {
+        const input = document.getElementById('userInput');
+        const chat = document.getElementById('chat');
+        const text = input.value.trim();
 
-    <div class="input-bar">
-        <textarea id="userInput" placeholder="Ask Sabrina..." rows="1"></textarea>
-        <button onclick="askSabrina()">EXECUTE</button>
-    </div>
+        if (!text) return;
 
-    <script>
-        // YOUR ACTIVE KEY
-        const KEY = "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg";
-        
-        // THE UPDATED SUCCESS URL
-        const URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        // Add User Message
+        chat.innerHTML += `<div class="bubble user">${text}</div>`;
+        input.value = "";
+        chat.scrollTop = chat.scrollHeight;
 
-        async function askSabrina() {
-            const input = document.getElementById('userInput');
-            const chat = document.getElementById('chat');
-            const text = input.value.trim();
+        // Create AI Bubble
+        const tempId = "ai-" + Date.now();
+        chat.innerHTML += `<div class="bubble ai" id="${tempId}">Neural link establishing...</div>`;
+        chat.scrollTop = chat.scrollHeight;
 
-            if (!text) return;
+        try {
+            const response = await fetch(`${URL}?key=${KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: "Your name is Sabrina. You are a genius AI. Solve: " + text }] }]
+                })
+            });
 
-            chat.innerHTML += `<div class="bubble user">${text}</div>`;
-            input.value = "";
-            chat.scrollTop = chat.scrollHeight;
+            const data = await response.json();
+            const aiBubble = document.getElementById(tempId);
 
-            const tempId = "ai-" + Date.now();
-            chat.innerHTML += `<div class="bubble ai" id="${tempId}">Sabrina is processing...</div>`;
-            chat.scrollTop = chat.scrollHeight;
-
-            try {
-                const response = await fetch(`${URL}?key=${KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Your name is Sabrina. You are a genius AI. Answer: " + text }] }]
-                    })
-                });
-
-                const data = await response.json();
-                const aiBubble = document.getElementById(tempId);
-
-                if (data.candidates && data.candidates[0].content) {
-                    const result = data.candidates[0].content.parts[0].text;
-                    aiBubble.innerHTML = marked.parse(result);
-                } else {
-                    // This will tell us if there's any other hidden error
-                    aiBubble.innerHTML = `<div style="color:red"><b>Sabrina:</b> ${data.error ? data.error.message : "Handshake failed"}</div>`;
-                }
-            } catch (err) {
-                document.getElementById(tempId).innerHTML = "Connection error. Check GitHub status.";
+            if (data.candidates && data.candidates[0].content) {
+                const result = data.candidates[0].content.parts[0].text;
+                aiBubble.innerHTML = marked.parse(result);
+            } else {
+                // This will show exactly what Google is complaining about if it fails
+                const errMsg = data.error ? data.error.message : "Handshake rejected.";
+                aiBubble.innerHTML = `<div style="color:#ff4444"><b>Sabrina Status:</b> ${errMsg}</div>`;
             }
-            chat.scrollTop = chat.scrollHeight;
+        } catch (err) {
+            document.getElementById(tempId).innerHTML = "Connection Error. Ensure GitHub Pages is active.";
         }
+        chat.scrollTop = chat.scrollHeight;
+    }
 
-        document.getElementById('userInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askSabrina(); }
-        });
-    </script>
-</body>
-</html>
+    // Enter Key Support
+    document.getElementById('userInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askSabrina(); }
+    });
+</script>
