@@ -1,0 +1,32 @@
+/* Classic Elegant Theme Styling */
+body {
+    font-family: 'Georgia', serif;
+    color: #333;
+    background-color: #f8f8f8;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #444;
+}
+
+p {
+    margin: 0 0 1rem;
+}
+
+a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
