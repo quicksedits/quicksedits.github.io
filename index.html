@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SABRINA AI | Active</title>
+    <title>SABRINA AI | 100% Active</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root { --accent: #00ffaa; --bg: #050508; }
@@ -20,7 +20,7 @@
 <body>
 
     <div id="chat">
-        <div class="bubble ai"><b>System Online.</b> I am Sabrina. I am ready to solve your projects. Ask me anything!</div>
+        <div class="bubble ai"><b>Logic Core Optimized.</b> I am Sabrina. I have fixed my internal link. Ask me "2+2" right now to see me work!</div>
     </div>
 
     <div class="input-bar">
@@ -29,11 +29,11 @@
     </div>
 
     <script>
-        // USING YOUR NEWEST WORKING KEY
+        // YOUR ACTIVE KEY
         const KEY = "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg";
         
-        // FIXED URL: Changed v1beta to v1 and fixed the model path
-        const URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+        // THE UPDATED SUCCESS URL
+        const URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
         async function askSabrina() {
             const input = document.getElementById('userInput');
@@ -47,7 +47,7 @@
             chat.scrollTop = chat.scrollHeight;
 
             const tempId = "ai-" + Date.now();
-            chat.innerHTML += `<div class="bubble ai" id="${tempId}">Sabrina is thinking...</div>`;
+            chat.innerHTML += `<div class="bubble ai" id="${tempId}">Sabrina is processing...</div>`;
             chat.scrollTop = chat.scrollHeight;
 
             try {
@@ -55,7 +55,7 @@
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Your name is Sabrina. You are a genius AI. Solve: " + text }] }]
+                        contents: [{ parts: [{ text: "Your name is Sabrina. You are a genius AI. Answer: " + text }] }]
                     })
                 });
 
@@ -66,11 +66,11 @@
                     const result = data.candidates[0].content.parts[0].text;
                     aiBubble.innerHTML = marked.parse(result);
                 } else {
-                    const errMsg = data.error ? data.error.message : "Neural link error";
-                    aiBubble.innerHTML = `<div style="color:#ff4444"><b>Sabrina Error:</b> ${errMsg}</div>`;
+                    // This will tell us if there's any other hidden error
+                    aiBubble.innerHTML = `<div style="color:red"><b>Sabrina:</b> ${data.error ? data.error.message : "Handshake failed"}</div>`;
                 }
             } catch (err) {
-                document.getElementById(tempId).innerHTML = "Connection Blocked. Check your internet.";
+                document.getElementById(tempId).innerHTML = "Connection error. Check GitHub status.";
             }
             chat.scrollTop = chat.scrollHeight;
         }
