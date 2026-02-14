@@ -3,72 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SABRINA | Master Intelligence 2026</title>
+    <title>SABRINA | Elite Logic AI</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     
     <style>
-        :root { --accent: #00ffaa; --bg: #020205; --border: rgba(0, 255, 170, 0.2); }
-        body { background: var(--bg); color: #fff; font-family: 'Space Grotesk', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        :root { --accent: #00ffaa; --bg: #020205; --panel: #0a0a0f; --border: rgba(0, 255, 170, 0.2); }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'Space Grotesk', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
         /* Sidebar */
-        .sidebar { width: 300px; background: #08080c; border-right: 1px solid var(--border); padding: 40px; display: flex; flex-direction: column; }
-        .logo { font-size: 2rem; font-weight: 800; color: var(--accent); text-shadow: 0 0 15px rgba(0,255,170,0.4); margin-bottom: 5px; }
-        .status { font-size: 0.7rem; letter-spacing: 2px; color: var(--accent); margin-bottom: 30px; }
+        .sidebar { width: 300px; background: var(--panel); border-right: 1px solid var(--border); padding: 40px; display: flex; flex-direction: column; }
+        .logo { font-size: 2.2rem; font-weight: 800; color: var(--accent); text-shadow: 0 0 15px rgba(0,255,170,0.4); }
+        .status { font-size: 0.7rem; letter-spacing: 2px; color: var(--accent); margin-top: 5px; opacity: 0.8; }
 
-        /* Workspace */
-        .main { flex: 1; display: flex; flex-direction: column; position: relative; }
-        #chat-flow { flex: 1; overflow-y: auto; padding: 60px 15%; display: flex; flex-direction: column; gap: 35px; }
+        /* Main Workspace */
+        .workspace { flex: 1; display: flex; flex-direction: column; background: radial-gradient(circle at center top, #0c1512, #020205); }
+        #chat-flow { flex: 1; overflow-y: auto; padding: 60px 12%; display: flex; flex-direction: column; gap: 35px; }
 
         /* Bubbles */
-        .bubble { max-width: 90%; line-height: 1.8; animation: slideUp 0.5s ease forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .user { align-self: flex-end; color: var(--accent); border-right: 3px solid var(--accent); padding-right: 20px; text-align: right; }
-        .ai { align-self: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 25px; border-radius: 15px; width: 100%; }
+        .bubble { max-width: 90%; line-height: 1.8; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .user { align-self: flex-end; color: var(--accent); border-right: 3px solid var(--accent); padding-right: 20px; text-align: right; font-weight: 500; }
+        .ai { align-self: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 30px; border-radius: 15px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         
-        .thought-log { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #556; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .thought-log { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #556; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; text-transform: uppercase; }
 
-        /* Input Zone */
-        .input-zone { padding: 40px 15%; background: linear-gradient(transparent, var(--bg)); }
-        .input-bar { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 15px; padding: 15px 25px; display: flex; gap: 20px; }
-        textarea { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 1.1rem; resize: none; font-family: inherit; }
-        button { background: var(--accent); color: #000; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        button:hover { box-shadow: 0 0 20px var(--accent); transform: scale(1.05); }
+        /* Input Area */
+        .input-zone { padding: 40px 12%; }
+        .input-bar { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; padding: 15px 25px; display: flex; gap: 20px; backdrop-filter: blur(10px); }
+        textarea { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 1.1rem; resize: none; font-family: inherit; padding-top: 10px; }
+        button { background: var(--accent); color: #000; border: none; padding: 12px 35px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        button:hover { box-shadow: 0 0 25px var(--accent); transform: translateY(-2px); }
+
+        /* Code Blocks */
+        pre { background: #000 !important; padding: 20px; border-radius: 12px; border: 1px solid #222; overflow-x: auto; }
+        code { font-family: 'JetBrains Mono', monospace; color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="side">
         <div class="logo">SABRINA</div>
-        <div class="status">● DEEP SEARCH ACTIVE</div>
-        <div style="margin-top: auto; color: #444; font-size: 0.8rem;">
-            Protocol: 2.0 Flash<br>Logic: High-Intelligence<br>Search: Enabled
+        <div class="status">● NEURAL CORE ACTIVE</div>
+        <div style="margin-top: 50px; color: #444; font-size: 0.8rem; line-height: 2;">
+            INTELLIGENCE: 2.0 FLASH<br>
+            SEARCH MODE: SIMULATED DEEP<br>
+            REASONING: PRO-LEVEL<br>
+            STATUS: READY
         </div>
     </aside>
 
-    <main class="main">
+    <main class="workspace">
         <div id="chat-flow">
             <div class="bubble ai">
-                <div class="thought-log">SABRINA_LOG: Logic nodes connected. Memory initialized.</div>
-                Hello. I am <b>Sabrina</b>. I have been configured with your API key and am ready to perform deep research, solve hard problems, and generate intelligent solutions. How shall we work today?
+                <div class="thought-log">Booting Sabrina OS... Connection Secure.</div>
+                Welcome. I am <b>Sabrina</b>. I have been initialized with your dedicated API key. I am ready to tackle your hardest projects, conduct deep logic research, and provide high-intelligence solutions. What is our first objective?
             </div>
         </div>
 
         <div class="input-zone">
             <div class="input-bar">
-                <textarea id="user-input" placeholder="Enter a deep research topic or hard problem..." rows="1"></textarea>
+                <textarea id="user-input" placeholder="Type a hard problem or research request..." rows="1"></textarea>
                 <button onclick="askSabrina()">EXECUTE</button>
             </div>
         </div>
     </main>
 
     <script>
-        // YOUR API KEY IS NOW INTEGRATED
+        // API KEY LOADED
         const SABRINA_KEY = "AIzaSyAU90lMJSHKKhs2iG7nadi847LXAoAW0jA"; 
-        const MODEL = "gemini-2.0-flash";
+        const MODEL = "gemini-1.5-flash"; // Using the stable 1.5-flash for maximum reliability
 
-        const PERSONALITY = "Your name is Sabrina. You are a world-class, hardworking, and extremely smart AI. You provide 'Deep Search' results by simulating a high-level web analysis. Give long, detailed, and logical answers with step-by-step reasoning.";
+        const PERSONALITY = "Your name is Sabrina. You are a genius, hardworking, and elite AI assistant. You provide 'Deep Search' results by simulating a high-level web analysis. Give long, detailed, and extremely smart answers with clear logical steps.";
 
         async function askSabrina() {
             const input = document.getElementById('user-input');
@@ -76,15 +84,15 @@
             const val = input.value.trim();
             if (!val) return;
 
-            // Add User Bubble
-            flow.innerHTML += `<div class="bubble user">${val}</div>`;
+            // Display User Message
+            addMessage('user', val);
             input.value = "";
             flow.scrollTop = flow.scrollHeight;
 
-            // Add Loading Bubble
+            // Display "Thinking" Loader
             const loader = document.createElement('div');
             loader.className = 'bubble ai';
-            loader.innerHTML = `<div class="thought-log">Simulating Web Search...<br>Cross-referencing Academic Data...<br>Compiling Elite Response...</div>Thinking...`;
+            loader.innerHTML = `<div class="thought-log">Accessing Global Data Nodes...<br>Simulating Deep Search...<br>Verifying Logical Accuracy...</div>Analyzing...`;
             flow.appendChild(loader);
 
             try {
@@ -92,32 +100,44 @@
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: PERSONALITY + "\n\nUser Request: " + val }] }],
-                        generationConfig: { temperature: 0.4, maxOutputTokens: 2500 }
+                        contents: [{ parts: [{ text: PERSONALITY + "\n\nUser Message: " + val }] }],
+                        generationConfig: { temperature: 0.4, maxOutputTokens: 2000 }
                     })
                 });
 
                 const data = await response.json();
                 loader.remove();
 
-                if (data.candidates) {
+                if (data.candidates && data.candidates[0].content) {
                     const reply = data.candidates[0].content.parts[0].text;
                     const aiDiv = document.createElement('div');
                     aiDiv.className = 'bubble ai';
                     aiDiv.innerHTML = `<div class="thought-log">SEARCH COMPLETE // LOGIC VERIFIED</div>${marked.parse(reply)}`;
                     flow.appendChild(aiDiv);
                 } else {
-                    throw new Error("Invalid API response");
+                    throw new Error("API Response Error");
                 }
             } catch (err) {
-                loader.innerHTML = `<div style="color:#ff4444">Sabrina: Neural Link Failed. Please ensure this file is hosted on GitHub Pages or a Live Server.</div>`;
+                loader.innerHTML = `<div style="color:#ff4444"><b>Sabrina:</b> Connection Refused. Please ensure this file is hosted on a web server (GitHub/Netlify).</div>`;
+                console.error(err);
             }
             flow.scrollTop = flow.scrollHeight;
         }
 
+        function addMessage(role, content) {
+            const div = document.createElement('div');
+            div.className = `bubble ${role}`;
+            div.innerHTML = content;
+            document.getElementById('chat-flow').appendChild(div);
+        }
+
+        // Handle Enter Key
         document.getElementById('user-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askSabrina(); }
         });
+
+        // Entrance Animation
+        gsap.from("#side", { x: -300, duration: 1.2, ease: "expo.out" });
     </script>
 </body>
 </html>
