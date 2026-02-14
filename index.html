@@ -27,41 +27,30 @@
     </div>
 
     <script>
-        const KEY =  "YOUR_NEW_KEY_HERE";  // Replace with a valid API key if this one is invalid
-        
-        // Updated to a current model (lightweight and fast, similar to the original)
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
-
         async function ask() {
             const input = document.getElementById('userInput');
             const chat = document.getElementById('chat');
             const val = input.value.trim();
-            if(!val) return;
+            if (!val) return;
 
             chat.innerHTML += `<div class="msg user"><b>YOU:</b> ${val}</div>`;
             input.value = "";
             chat.scrollTop = chat.scrollHeight;
 
             try {
-                const response = await fetch(`\( {API_URL}?key= \){KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Your name is Sabrina. Answer: " + val }] }]
-                    })
+                const response = await fetch('http://localhost:3000/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: val })
                 });
-
                 const data = await response.json();
-                
-                if (data.candidates) {
-                    const answer = data.candidates[0].content.parts[0].text;
-                    chat.innerHTML += `<div class="msg"><b>SABRINA:</b> ${answer}</div>`;
+                if (data.answer) {
+                    chat.innerHTML += `<div class="msg"><b>SABRINA:</b> ${data.answer}</div>`;
                 } else {
-                    // This shows the exact reason if it fails
-                    chat.innerHTML += `<div class="msg" style="color:red">ERROR: ${data.error.message}</div>`;
+                    chat.innerHTML += `<div class="msg" style="color:red">ERROR: ${data.error}</div>`;
                 }
             } catch (e) {
-                chat.innerHTML += `<div class="msg" style="color:red">CONNECTION_LOST: Try again.</div>`;
+                chat.innerHTML += `<div class="msg" style="color:red">CONNECTION_LOST: Try again. (Check server?)</div>`;
             }
             chat.scrollTop = chat.scrollHeight;
         }
