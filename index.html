@@ -1,56 +1,87 @@
-<script>
-    // 1. YOUR LATEST KEY
-    const KEY = "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg";
-    
-    // 2. UPDATED STABLE URL & MODEL
-    // We are switching to the v1beta endpoint with the 2.0 model for maximum compatibility
-    const URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SABRINA AI | FINAL</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { background: #050508; color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .bubble { padding: 15px; border-radius: 12px; max-width: 85%; line-height: 1.6; word-wrap: break-word; }
+        .user { align-self: flex-end; background: #00ffaa; color: black; font-weight: bold; }
+        .ai { align-self: flex-start; background: #11111a; border: 1px solid #333; }
+        .input-bar { padding: 20px; background: #000; display: flex; gap: 10px; border-top: 1px solid #222; }
+        input { flex: 1; background: #111; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; outline: none; }
+        button { background: #00ffaa; color: black; border: none; padding: 0 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
 
-    async function askSabrina() {
-        const input = document.getElementById('userInput');
-        const chat = document.getElementById('chat');
-        const text = input.value.trim();
+    <div id="chat">
+        <div class="bubble ai"><b>Sabrina:</b> Neural link stable. I am ready to work. Ask me a question!</div>
+    </div>
 
-        if (!text) return;
+    <div class="input-bar">
+        <input type="text" id="userInput" placeholder="Type your message here...">
+        <button onclick="askSabrina()">EXECUTE</button>
+    </div>
 
-        // Add User Message
-        chat.innerHTML += `<div class="bubble user">${text}</div>`;
-        input.value = "";
-        chat.scrollTop = chat.scrollHeight;
+    <script>
+        // Your active API key
+        const KEY = "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg";
+        
+        // The most stable address for Sabrina's brain in 2026
+        const URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
-        // Create AI Bubble
-        const tempId = "ai-" + Date.now();
-        chat.innerHTML += `<div class="bubble ai" id="${tempId}">Neural link establishing...</div>`;
-        chat.scrollTop = chat.scrollHeight;
+        async function askSabrina() {
+            const input = document.getElementById('userInput');
+            const chat = document.getElementById('chat');
+            const text = input.value.trim();
 
-        try {
-            const response = await fetch(`${URL}?key=${KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: "Your name is Sabrina. You are a genius AI. Solve: " + text }] }]
-                })
-            });
+            if (!text) return;
 
-            const data = await response.json();
-            const aiBubble = document.getElementById(tempId);
+            // 1. Show your message
+            chat.innerHTML += `<div class="bubble user">${text}</div>`;
+            input.value = "";
+            chat.scrollTop = chat.scrollHeight;
 
-            if (data.candidates && data.candidates[0].content) {
-                const result = data.candidates[0].content.parts[0].text;
-                aiBubble.innerHTML = marked.parse(result);
-            } else {
-                // This will show exactly what Google is complaining about if it fails
-                const errMsg = data.error ? data.error.message : "Handshake rejected.";
-                aiBubble.innerHTML = `<div style="color:#ff4444"><b>Sabrina Status:</b> ${errMsg}</div>`;
+            // 2. Show thinking message
+            const tempId = "msg-" + Date.now();
+            chat.innerHTML += `<div class="bubble ai" id="${tempId}">Thinking...</div>`;
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                // 3. Talk to the AI
+                const response = await fetch(`${URL}?key=${KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Your name is Sabrina. You are a genius AI. Solve: " + text }] }]
+                    })
+                });
+
+                const data = await response.json();
+                const bubble = document.getElementById(tempId);
+
+                // 4. Show the AI's answer
+                if (data.candidates && data.candidates[0].content) {
+                    const answer = data.candidates[0].content.parts[0].text;
+                    bubble.innerHTML = marked.parse(answer);
+                } else {
+                    // Show exact error if it fails
+                    bubble.innerHTML = "Sabrina Error: " + (data.error ? data.error.message : "Handshake failed.");
+                }
+            } catch (err) {
+                document.getElementById(tempId).innerHTML = "Connection Error. Check your internet.";
             }
-        } catch (err) {
-            document.getElementById(tempId).innerHTML = "Connection Error. Ensure GitHub Pages is active.";
+            chat.scrollTop = chat.scrollHeight;
         }
-        chat.scrollTop = chat.scrollHeight;
-    }
 
-    // Enter Key Support
-    document.getElementById('userInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askSabrina(); }
-    });
-</script>
+        // Support for the Enter key
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') askSabrina();
+        });
+    </script>
+</body>
+</html>
