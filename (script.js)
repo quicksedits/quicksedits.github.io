@@ -1,43 +1,213 @@
 /**
- * SABRINA AI - MASTER LOGIC CORE (2026)
- * This file handles the direct connection to Google's Gemini API.
+ * SABRINA AI - MASTER LOGIC CORE (2026) — IMPROVED
+ * Connects to Google's Gemini API with proper error handling,
+ * retries, timeouts, and streaming support.
  */
 
 const SABRINA_CONFIG = {
-    apiKey: "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg",
-    // Using the stable v1beta endpoint to solve the "Model Not Found" error
-    apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+  // ⚠️ SECURITY: Move this to an environment variable in production!
+  // e.g. process.env.GEMINI_API_KEY (Node.js) or import.meta.env.VITE_GEMINI_KEY (Vite)
+  apiKey: "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg",
+
+  // Stable v1beta endpoint for gemini-1.5-flash
+  apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+
+  // Streaming endpoint
+  streamUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent",
+
+  // Sabrina's system identity — kept separate from user prompt
+  systemInstruction: "Your name is Sabrina. You are a brilliant, warm, and helpful AI assistant. Be concise, clear, and friendly. Use plain text only — no markdown formatting.",
+
+  maxRetries: 3,
+  timeoutMs: 15000, // 15 seconds
 };
 
-async function executeQuery(userPrompt) {
-    if (!userPrompt) return "Error: No input provided.";
+/**
+ * Core query function with retry logic and timeout.
+ * @param {string} userPrompt - The user's message
+ * @param {Array} history - Optional conversation history [{role, text}]
+ * @returns {Promise<string>} - Sabrina's reply
+ */
+async function executeQuery(userPrompt, history = []) {
+  if (!userPrompt || typeof userPrompt !== "string") {
+    return "Error: No valid input provided.";
+  }
+
+  // Build conversation contents
+  const contents = [
+    // Inject prior history if any
+    ...history.map((msg) => ({
+      role: msg.role === "user" ? "user" : "model",
+      parts: [{ text: msg.text }],
+    })),
+    // Current user message
+    {
+      role: "user",
+      parts: [{ text: userPrompt }],
+    },
+  ];
+
+  const body = JSON.stringify({
+    system_instruction: {
+      parts: [{ text: SABRINA_CONFIG.systemInstruction }],
+    },
+    contents,
+    generationConfig: {
+      temperature: 0.8,
+      maxOutputTokens: 1024,
+    },
+  });
+
+  for (let attempt = 1; attempt <= SABRINA_CONFIG.maxRetries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), SABRINA_CONFIG.timeoutMs);
 
     try {
-        const response = await fetch(`${SABRINA_CONFIG.apiUrl}?key=${SABRINA_CONFIG.apiKey}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: `Your name is Sabrina. You are a hardworking genius AI. Solve: ${userPrompt}` }]
-                }]
-            })
-        });
-
-        const data = await response.json();
-
-        // Checking if the neural link successfully returned data
-        if (data.candidates && data.candidates[0].content) {
-            return data.candidates[0].content.parts[0].text;
-        } else {
-            // This captures the exact error message from Google's servers
-            return `SABRINA_ERROR: ${data.error ? data.error.message : "Handshake Failed"}`;
+      const response = await fetch(
+        `${SABRINA_CONFIG.apiUrl}?key=${SABRINA_CONFIG.apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body,
+          signal: controller.signal,
         }
+      );
+
+      clearTimeout(timer);
+
+      // Handle HTTP-level errors
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const msg = errData?.error?.message || `HTTP ${response.status}`;
+
+        // Don't retry on auth or not-found errors
+        if (response.status === 400 || response.status === 401 || response.status === 404) {
+          return `SABRINA_ERROR: ${msg}`;
+        }
+
+        // Retry on 429 (rate limit) or 5xx (server errors)
+        if (attempt < SABRINA_CONFIG.maxRetries) {
+          await sleep(attempt * 1000); // exponential backoff
+          continue;
+        }
+        return `SABRINA_ERROR: ${msg}`;
+      }
+
+      const data = await response.json();
+
+      // Parse successful response
+      const candidate = data?.candidates?.[0];
+      if (candidate?.content?.parts?.[0]?.text) {
+        return candidate.content.parts[0].text.trim();
+      }
+
+      // Handle safety blocks
+      if (candidate?.finishReason === "SAFETY") {
+        return "Sabrina: That topic was flagged by safety filters. Please try rephrasing.";
+      }
+
+      return "SABRINA_ERROR: Unexpected response format from API.";
+
     } catch (error) {
-        return "CONNECTION_FAILURE: Link to API disrupted.";
+      clearTimeout(timer);
+
+      if (error.name === "AbortError") {
+        if (attempt < SABRINA_CONFIG.maxRetries) continue;
+        return "CONNECTION_FAILURE: Request timed out. Check your internet connection.";
+      }
+
+      if (attempt < SABRINA_CONFIG.maxRetries) {
+        await sleep(attempt * 1000);
+        continue;
+      }
+
+      return `CONNECTION_FAILURE: ${error.message || "Link to API disrupted."}`;
     }
+  }
 }
 
+/**
+ * Streaming version — calls onChunk(text) as each piece arrives.
+ * @param {string} userPrompt
+ * @param {Array} history
+ * @param {function} onChunk - called with each text chunk
+ * @param {function} onDone - called when streaming is complete
+ * @param {function} onError - called on error
+ */
+async function executeQueryStream(userPrompt, history = [], onChunk, onDone, onError) {
+  if (!userPrompt) return onError?.("No input provided.");
+
+  const contents = [
+    ...history.map((msg) => ({
+      role: msg.role === "user" ? "user" : "model",
+      parts: [{ text: msg.text }],
+    })),
+    { role: "user", parts: [{ text: userPrompt }] },
+  ];
+
+  try {
+    const response = await fetch(
+      `${SABRINA_CONFIG.streamUrl}?key=${SABRINA_CONFIG.apiKey}&alt=sse`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SABRINA_CONFIG.systemInstruction }] },
+          contents,
+          generationConfig: { temperature: 0.8, maxOutputTokens: 1024 },
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      return onError?.(`API Error: ${errData?.error?.message || response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      for (const line of chunk.split("\n")) {
+        if (!line.startsWith("data: ")) continue;
+        const raw = line.slice(6).trim();
+        if (!raw || raw === "[DONE]") continue;
+        try {
+          const parsed = JSON.parse(raw);
+          const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            fullText += text;
+            onChunk?.(text, fullText);
+          }
+        } catch {}
+      }
+    }
+
+    onDone?.(fullText);
+  } catch (err) {
+    onError?.(err.message || "Streaming connection failed.");
+  }
+}
+
+/** Helper: sleep for ms milliseconds */
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Named exports for use in modules
+// export { executeQuery, executeQueryStream, SABRINA_CONFIG };
+
 // Example usage:
-// executeQuery("2+2").then(answer => console.log(answer));
+// executeQuery("What is the speed of light?").then(console.log);
+//
+// executeQueryStream(
+//   "Tell me a joke",
+//   [],
+//   (chunk, full) => process.stdout.write(chunk),
+//   (full) => console.log("\nDone:", full),
+//   (err) => console.error("Error:", err)
+// );
