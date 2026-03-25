@@ -7,7 +7,7 @@
 const SABRINA_CONFIG = {
   // ⚠️ SECURITY: Move this to an environment variable in production!
   // e.g. process.env.GEMINI_API_KEY (Node.js) or import.meta.env.VITE_GEMINI_KEY (Vite)
-  apiKey: "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg",
+  apiKey: "AIzaSyCUE495rPcctLx_M4TMru_5CJ917AyfnHo",
 
   // Stable v1beta endpoint for gemini-1.5-flash
   apiUrl: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
