@@ -9,7 +9,7 @@ const SABRINA_CONFIG = {
   // Use environment variable in production:
   // Node.js → process.env.GEMINI_API_KEY
   // Vite/React → import.meta.env.VITE_GEMINI_API_KEY
-  apiKey: "AIzaSyDMsEWb684y0FzptAJ8vT5HMxlahV2hWNg", // ← Replace with env var
+  apiKey: "AIzaSyCUE495rPcctLx_M4TMru_5CJ917AyfnHo", // ← Replace with env var
 
   // Recommended model (gemini-1.5-flash still works, but consider updating)
   model: "gemini-1.5-flash",
